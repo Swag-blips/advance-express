@@ -30,5 +30,5 @@ app.post("/posts", (req: Request, res: Response) => {
 });
 
 app.listen(5000, () => {
-  console.log("Listening on 4000");
+  console.log("Listening on 5000");
 });
