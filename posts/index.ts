@@ -13,6 +13,7 @@ interface Post {
 }
 let posts: Post = {};
 
+
 app.get("/posts", (req: Request, res: Response) => {
   res.send(posts);
 });
@@ -22,7 +23,7 @@ app.post("/posts", (req: Request, res: Response) => {
   const { title } = req.body;
 
   posts[id] = {
-    id,
+    id, 
     title,
   };
 
