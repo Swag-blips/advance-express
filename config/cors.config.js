@@ -8,7 +8,6 @@ const configureCors = () => {
         "http://localhost:3000",
         "https://yourcustomdomain.com",
       ];
-
       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true); // giving permission so that the request can be allowed
       } else {
