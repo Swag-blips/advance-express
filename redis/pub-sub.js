@@ -30,12 +30,29 @@ async function testPubSub() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     await subscriber.unsubscribe("dummy-channel");
-    await subscriber.quit();  //close the subscriber connection
-
+    await subscriber.quit(); //close the subscriber connection
 
     //pipelining and transactions
 
+    const multi = client.multi();
+
+    multi.set("key-transaction1", "value1");
+
+    multi.set("key-transaction2", "value2");
+
+    multi.get("key-transaction1");
+    multi.get("key-transaction2");
+
+    const results = await multi.exec();
+
+    console.log(results);
+
+    const pipeline = client.multi();
+
     
+    multi.set("pipeline-1", "value1");
+
+    multi.set("pipeline-2", "value2");
   } catch (error) {
     console.error(error);
   } finally {
