@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "keywords": [],
   "author": "",
@@ -25,5 +27,6 @@
     "mongoose": "^8.9.6",
     "rate-limit-redis": "^4.2.0",
     "winston": "^3.17.0"
-  }
+  },
+  "type": "module"
 }
