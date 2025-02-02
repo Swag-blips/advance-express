@@ -1,7 +1,7 @@
-import User from "../models/User";
-import generateTokens from "../utils/generateToken";
-import logger from "../utils/logger";
-import validateRegistration from "../utils/validation";
+import User from "../models/User.js";
+import generateTokens from "../utils/generateToken.js";
+import logger from "../utils/logger.js";
+import validateRegistration from "../utils/validation.js";
 // user registration
 export const registerUser = async (req, res) => {
   logger.info("Registration endpoint hit");
