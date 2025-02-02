@@ -30,6 +30,7 @@ app.use(express.json());
 app.use((req, res, next) => {
   logger.info(`received ${req.method} request to ${req.url}`);
   logger.info(`Request body ${req.body}`);
+  next();
 });
 
 // ddos protection and rate limiting
@@ -49,6 +50,7 @@ app.use((req, res, next) => {
       logger.warn(`Rate limit exceeded for IP: ${req.ip}`);
       res.status(429).json({ success: false, message: "Too many requests" });
     });
+    
 });
 
 // Ip based rate limiting for sensitive endpoints
@@ -65,13 +67,11 @@ const sensitiveEndpointsRateLimiter = rateLimit({
     sendCommand: (...args) => redisClient.call(...args),
   }),
 });
-
+app.use("/api/auth", routes);
 // apply these limiter to our routes
 app.use("/api/auth/register", sensitiveEndpointsRateLimiter);
 
 // Routes
-
-app.use("/api/auth", routes);
 
 app.use(errorHandler);
 

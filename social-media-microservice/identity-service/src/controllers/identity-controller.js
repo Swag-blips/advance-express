@@ -22,8 +22,9 @@ export const registerUser = async (req, res) => {
 
     let user = await User.findOne({ $or: [{ email }, { username }] });
 
+
     if (user) {
-      logger.warn("user already exists", error.details[0].message);
+      logger.warn("user already exists");
       return res.status(400).json({
         success: false,
         message: "User already exists",
@@ -43,7 +44,8 @@ export const registerUser = async (req, res) => {
       refreshToken,
     });
   } catch (error) {
-    logger.error("registration error occured", error);
+    logger.error("registration error occured", error.message);
+    console.log(error.message);
     res.status(500).json({
       success: false,
       message: "Internal server error",
