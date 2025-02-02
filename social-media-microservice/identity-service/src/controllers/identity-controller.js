@@ -3,7 +3,7 @@ import generateTokens from "../utils/generateToken";
 import logger from "../utils/logger";
 import validateRegistration from "../utils/validation";
 // user registration
-const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   logger.info("Registration endpoint hit");
   try {
     // validate schema
