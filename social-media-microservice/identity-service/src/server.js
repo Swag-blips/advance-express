@@ -4,6 +4,8 @@ import logger from "./utils/logger";
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
+import { RateLimiterRedis } from "rate-limiter-flexible";
+import Redis from "ioredis";
 dotenv.config();
 
 mongoose
@@ -11,6 +13,7 @@ mongoose
   .then(() => logger.info("Connected to mongodb"))
   .catch((e) => logger.error("Mongo connection error", e));
 
+const redisClient = new Redis(process.env.REDIS_URL);
 // middleware
 
 const app = express();
@@ -21,5 +24,14 @@ app.use(express.json());
 
 app.use((req, res, next) => {
   logger.info(`received ${req.method} request to ${req.url}`);
-  logger.info(`Request body ${req.body}`)
+  logger.info(`Request body ${req.body}`);
+});
+
+// ddos protection and rate limiting
+
+const rateLimiter = new RateLimiterRedis({
+  storeClient: redisClient,
+  keyPrefix: "middleware",
+  points: 10,
+  duration: 1,
 });
