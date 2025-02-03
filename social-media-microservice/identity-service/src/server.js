@@ -50,7 +50,6 @@ app.use((req, res, next) => {
       logger.warn(`Rate limit exceeded for IP: ${req.ip}`);
       res.status(429).json({ success: false, message: "Too many requests" });
     });
-    
 });
 
 // Ip based rate limiting for sensitive endpoints
