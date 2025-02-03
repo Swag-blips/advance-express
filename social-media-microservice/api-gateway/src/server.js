@@ -58,7 +58,7 @@ const proxyOptions = {
 app.use(
   "/v1/auth",
   proxy(process.env.IDENTITY_SERVICE_URL, {
-    ...proxy,
+    ...proxyOptions,
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
       proxyReqOpts.headers["Content-Type"] = "application/json";
       return proxyReqOpts;
