@@ -1,7 +1,7 @@
 import Post from "../models/Post.js";
 import logger from "../utils/logger.js";
 
-const createPost = async (req, res) => {
+export const createPost = async (req, res) => {
   try {
     const { content, mediaIds } = req.body;
 
@@ -25,7 +25,7 @@ const createPost = async (req, res) => {
   }
 };
 
-const getAllPosts = async (req, res) => {
+export const getAllPosts = async (req, res) => {
   try {
   } catch (error) {
     logger.error("error fetching posts", error);
@@ -36,7 +36,7 @@ const getAllPosts = async (req, res) => {
   }
 };
 
-const getPost = async (req, res) => {
+export const getPost = async (req, res) => {
   try {
   } catch (error) {
     logger.error("error fetching post", error);
