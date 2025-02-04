@@ -23,7 +23,6 @@ export const uploadMediaToCloudinary = (file) => {
         }
       }
     );
-
     uploadStream.end(file.buffer);
   });
 };
