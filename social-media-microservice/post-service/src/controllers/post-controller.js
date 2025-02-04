@@ -86,6 +86,28 @@ export const getAllPosts = async (req, res) => {
 
 export const getPost = async (req, res) => {
   try {
+    const postId = req.params.id;
+
+    const cacheKey = `post:${postId}`;
+
+    const cachedPosts = await req.redisClient.get(cacheKey);
+
+    if (cachedPosts) {
+      return res.json(JSON.parse(cachedPosts));
+    }
+
+    const singlePost = await Post.findById(postId);
+
+    if (!singlePost) {
+      return res.status(404).json({
+        message: "Post not found",
+        success: false,
+      });
+    }
+
+    await req.redisClient.setex(cachedPosts, 3600, JSON.stringify(singlePost));
+
+    res.json(singlePost);
   } catch (error) {
     logger.error("error fetching post", error);
     res.status(500).json({
