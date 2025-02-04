@@ -3,6 +3,9 @@ import logger from "../utils/logger.js";
 import { validatePost } from "../utils/validation.js";
 
 async function invalidatePostCache(req, input) {
+  const cachedKey = `post:${input}`;
+
+  await req.redisClient.del(cachedKey);
   const keys = await req.redisClient.keys("posts:*");
 
   if (keys.length > 0) {
@@ -105,9 +108,38 @@ export const getPost = async (req, res) => {
       });
     }
 
-    await req.redisClient.setex(cachedPosts, 3600, JSON.stringify(singlePost));
+    await req.redisClient.setex(cacheKey, 3600, JSON.stringify(singlePost));
 
     res.json(singlePost);
+  } catch (error) {
+    logger.error("error fetching post", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching post by ID",
+    });
+  }
+};
+
+export const deletePost = async (req, res) => {
+  const postId = req.params.id;
+
+  try {
+    const post = await Post.findOneAndDelete({
+      _id: postId,
+      user: req.user.userId,
+    });
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found",
+        success: false,
+      });
+    }
+
+    await invalidatePostCache(req, req.params.id);
+    res.json({
+      message: "Post deleted successfully",
+    });
   } catch (error) {
     logger.error("error fetching post", error);
     res.status(500).json({
