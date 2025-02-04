@@ -1,24 +1,23 @@
-import dotenv from dotenv
-import express from "express"
-import mongoose from "mongoose"
-import Redis from "io-redis"
-import cors from "cors"
-import helmet from "helmet"
-import postRoutes from "./routes/post-route.js"
-import errorHandler from "./middleware/errorHandler.js"
-import logger from "./utils/logger.js"
-dotenv.config()
+import dotenv from "dotenv";
+import express from "express";
+import mongoose from "mongoose";
+import Redis from "ioredis";
+import cors from "cors";
+import helmet from "helmet";
+import postRoutes from "./routes/post-route.js";
+import errorHandler from "./middleware/errorHandler.js";
+import logger from "./utils/logger.js";
+dotenv.config();
 
-const app = express()
+const app = express();
 
-const PORT = process.env.PORT || 3002
+const PORT = process.env.PORT || 3002;
 
 mongoose
   .connect(process.env.MONGODB_URL)
   .then(() => logger.info("Connected to mongodb"))
   .catch((e) => logger.error("Mongo connection error", e));
 
-  
 const redisClient = new Redis(process.env.REDIS_URL);
 
 app.use(helmet());
@@ -31,16 +30,18 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
-app.use("/api/posts", (req,res,next) => {
-    req.redisClient = redisClient
-    next()
-}, postRoutes)
+app.use(
+  "/api/posts",
+  (req, res, next) => {
+    req.redisClient = redisClient;
+    next();
+  },
+  postRoutes
+);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  logger.info(`identity service running on port ${PORT}`);
+  logger.info(`post service running on port ${PORT}`);
 });
 
 process.on("unhandledRejection", (reason, promise) => {

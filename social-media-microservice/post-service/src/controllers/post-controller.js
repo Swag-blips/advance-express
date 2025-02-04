@@ -1,8 +1,19 @@
 import Post from "../models/Post.js";
 import logger from "../utils/logger.js";
+import { validatePost } from "../utils/validation.js";
 
 export const createPost = async (req, res) => {
+  logger.info("Create post endpoint hit");
   try {
+    const { error } = validatePost(req.body);
+
+    if (error) {
+      logger.warn("validation error", error.details[0].message);
+      return res.status(400).json({
+        success: false,
+        message: error.details[0].message,
+      });
+    }
     const { content, mediaIds } = req.body;
 
     const newPost = new Post({
