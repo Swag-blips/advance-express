@@ -17,12 +17,12 @@ const validateToken = (req, res, next) => {
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
       logger.warn("invalid token!");
-      return res.status(429).json({
+      return res.status(401).json({
         success: false,
         message: "Invalid token",
       });
     }
- 
+
     req.user = user;
     next();
   });

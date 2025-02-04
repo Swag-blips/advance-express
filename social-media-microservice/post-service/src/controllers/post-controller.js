@@ -2,6 +2,13 @@ import Post from "../models/Post.js";
 import logger from "../utils/logger.js";
 import { validatePost } from "../utils/validation.js";
 
+async function invalidatePostCache(req, input) {
+  const keys = await req.redisClient.keys("posts:*");
+
+  if (keys.length > 0) {
+    await req.redisClient.del(keys);
+  }
+}
 export const createPost = async (req, res) => {
   logger.info("Create post endpoint hit");
   try {
@@ -23,6 +30,7 @@ export const createPost = async (req, res) => {
     });
 
     await newPost.save();
+    await invalidatePostCache(req, newPost._id.toString());
     logger.info("Post created successfully");
     res
       .status(201)
@@ -37,7 +45,36 @@ export const createPost = async (req, res) => {
 };
 
 export const getAllPosts = async (req, res) => {
+  logger.info("Get all posts");
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const startIndex = (page - 1) * limit;
+
+    const cacheKey = `posts:${page}:${limit}`;
+    const cachedPosts = await req.redisClient.get(cacheKey);
+
+    if (cachedPosts) {
+      return res.json(JSON.parse(cachedPosts));
+    }
+
+    const posts = await Post.find({})
+      .sort({ createdAt: -1 })
+      .skip(startIndex)
+      .limit(limit);
+
+    const total = await Post.countDocuments();
+
+    const result = {
+      posts,
+      currentpage: page,
+      totalPages: Math.ceil(total / limit),
+      totalPosts: total,
+    };
+
+    await req.redisClient.setex(cacheKey, 300, JSON.stringify(result));
+
+    res.json(result);
   } catch (error) {
     logger.error("error fetching posts", error);
     res.status(500).json({
