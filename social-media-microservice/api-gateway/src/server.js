@@ -42,12 +42,16 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(errorHandler);
 const proxyOptions = {
   proxyReqPathResolver: function (req) {
     return req.originalUrl.replace(/^\/v1/, "/api");
   },
   proxyErrorHandler: (err, res, next) => {
-    logger.error(`Proxy error: ${err.message}`);
+    logger.error(`Proxy error: ${err}`);
+    if (err.errors) {
+      logger.error(`Inner errors: ${JSON.stringify(err.errors)}`);
+    }
     res.status(500).json({
       message: "Internal server error",
       error: err.message,
@@ -103,7 +107,6 @@ app.use(
     ...proxyOptions,
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
       proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
-
       if (!srcReq.headers["content-type"].startsWith("multipart/form-data")) {
         proxyReqOpts.headers["Content-Type"] = "application/json";
       }
@@ -122,8 +125,6 @@ app.use(
   })
 );
 
-app.use(errorHandler);
-
 app.listen(PORT, () => {
   logger.info(`api gateway is running on port ${PORT}`);
   logger.info(
@@ -131,6 +132,10 @@ app.listen(PORT, () => {
   );
   logger.info(
     `Post service  is running on port ${process.env.POST_SERVICE_URL}`
+  );
+
+  logger.info(
+    `Media service  is running on port ${process.env.MEDIA_SERVICE_URL}`
   );
   logger.info(`Redis URL ${process.env.REDIS_URL}`);
 });

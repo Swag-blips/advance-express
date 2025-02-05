@@ -30,6 +30,9 @@ app.use((req, res, next) => {
 app.use("/api/media", mediaRoutes);
 app.use(errorHandler);
 
+app.listen(PORT, () => {
+  logger.info(`Media service is running on port ${PORT}`);
+});
 process.on("unhandledRejection", (reason, promise) => {
   logger.error("unhandled rejection at ", promise, "reason:", reason);
 });
