@@ -13,7 +13,6 @@ export const uploadMedia = async (req, res) => {
         message: "No file found. Please add a file and try again",
       });
     }
-
     const { originalName, mimeType, buffer } = req.file;
 
     const userId = req.user.userId;
@@ -43,10 +42,10 @@ export const uploadMedia = async (req, res) => {
       message: "Media uploaded successfully",
     });
   } catch (error) {
-    logger.error("error fetching post", error);
+    logger.error("error uploading media", error);
     res.status(500).json({
       success: false,
-      message: "Error fetching post by ID",
+      message: "Error uploading media",
     });
   }
 };
