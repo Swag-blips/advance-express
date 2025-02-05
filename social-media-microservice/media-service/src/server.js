@@ -6,6 +6,7 @@ import helmet from "helmet";
 import mediaRoutes from "./routes/media-routes.js";
 import errorHandler from "./middleware/errorHandler.js";
 import logger from "./utils/logger.js";
+dotenv.config();
 
 const app = express();
 

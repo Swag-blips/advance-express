@@ -2,7 +2,6 @@ import express from "express";
 import multer from "multer";
 import authenticateRequest from "../middleware/authMiddleware.js";
 import logger from "../utils/logger.js";
-import { error } from "winston";
 import { uploadMedia } from "../controllers/media-controller.js";
 
 const router = express.Router();
