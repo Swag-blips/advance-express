@@ -7,7 +7,7 @@ import helmet from "helmet";
 import postRoutes from "./routes/post-route.js";
 import errorHandler from "./middleware/errorHandler.js";
 import logger from "./utils/logger.js";
-import connectRabbitMQ from "./utils/rabbitmq.js";
+import { connectRabbitMQ } from "./utils/rabbitmq.js";
 dotenv.config();
 
 const app = express();

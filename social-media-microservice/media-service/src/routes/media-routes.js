@@ -3,7 +3,7 @@ import multer from "multer";
 import authenticateRequest from "../middleware/authMiddleware.js";
 import logger from "../utils/logger.js";
 
-import { uploadMedia } from "../controllers/media-controller.js";
+import { getAllMedias, uploadMedia } from "../controllers/media-controller.js";
 
 const router = express.Router();
 
@@ -46,5 +46,7 @@ router.post(
   },
   uploadMedia
 );
+
+router.get("/get", authenticateRequest, getAllMedias);
 
 export default router;

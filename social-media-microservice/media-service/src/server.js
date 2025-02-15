@@ -6,6 +6,8 @@ import helmet from "helmet";
 import mediaRoutes from "./routes/media-routes.js";
 import errorHandler from "./middleware/errorHandler.js";
 import logger from "./utils/logger.js";
+import { connectRabbitMQ, consumeEvent } from "./utils/rabbitmq.js";
+import { handlePostDeleted } from "./eventHandlers/media-event-handlers.js";
 dotenv.config();
 
 const app = express();
@@ -30,9 +32,21 @@ app.use((req, res, next) => {
 app.use("/api/media", mediaRoutes);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  logger.info(`Media service is running on port ${PORT}`);
-});
+async function startServer() {
+  try {
+    await connectRabbitMQ();
+
+    await consumeEvent("post.deleted", handlePostDeleted);
+    app.listen(PORT, () => {
+      logger.info(`Media service is running on port ${PORT}`);
+    });
+  } catch (error) {
+    process.exit(1);
+  }
+}
+
+startServer();
+
 process.on("unhandledRejection", (reason, promise) => {
   logger.error("unhandled rejection at ", promise, "reason:", reason);
 });
