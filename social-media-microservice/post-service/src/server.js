@@ -7,6 +7,7 @@ import helmet from "helmet";
 import postRoutes from "./routes/post-route.js";
 import errorHandler from "./middleware/errorHandler.js";
 import logger from "./utils/logger.js";
+import connectRabbitMQ from "./utils/rabbitmq.js";
 dotenv.config();
 
 const app = express();
@@ -40,10 +41,19 @@ app.use(
 );
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  logger.info(`post service running on port ${PORT}`);
-});
+async function startServer() {
+  try {
+    await connectRabbitMQ();
+    app.listen(PORT, () => {
+      logger.info(`post service running on port ${PORT}`);
+    });
+  } catch (error) {
+    logger.error("Failed to connect to server", error);
+    process.exit(1);
+  }
+}
 
+startServer();
 process.on("unhandledRejection", (reason, promise) => {
   logger.error("unhandled rejection at ", promise, "reason:", reason);
 });

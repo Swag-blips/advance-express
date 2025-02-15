@@ -1,5 +1,5 @@
 import amqp from "amqplib";
-import logger from "./logger";
+import logger from "./logger.js";
 
 let connection = null;
 let channel = null;
@@ -13,7 +13,7 @@ async function connectRabbitMQ() {
 
     await channel.assertExchange(EXCHANGE_NAME, "topic", { durable: false });
     logger.info("Connected to rabbit mq");
-
+     
     return channel;
   } catch (error) {
     logger.error("Error connecting to rabbit MQ");
