@@ -123,6 +123,10 @@ export const getPost = async (req, res) => {
 
 export const deletePost = async (req, res) => {
   const postId = req.params.id;
+  console.log({
+    _id: postId,
+    user: req.user.userId,
+  });
 
   try {
     const post = await Post.findOneAndDelete({
@@ -130,6 +134,7 @@ export const deletePost = async (req, res) => {
       user: req.user.userId,
     });
 
+    console.log(post);
     if (!post) {
       return res.status(404).json({
         message: "Post not found",
