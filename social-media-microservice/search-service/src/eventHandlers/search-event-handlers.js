@@ -1,4 +1,5 @@
 import Search from "../models/Search.js";
+import logger from "../utils/logger.js";
 
 async function handlePostCreated(event) {
   try {
@@ -15,6 +16,7 @@ async function handlePostCreated(event) {
     );
   } catch (error) {
     logger.error(error, "Error handling post creation event");
+    throw error;
   }
 }
 

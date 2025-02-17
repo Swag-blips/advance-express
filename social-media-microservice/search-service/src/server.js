@@ -43,7 +43,8 @@ async function startServer() {
   }
 }
 
-startServer();
 process.on("unhandledRejection", (reason, promise) => {
-  logger.error("unhandled rejection at ", promise, "reason:", reason);
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
 });
+
+startServer();
