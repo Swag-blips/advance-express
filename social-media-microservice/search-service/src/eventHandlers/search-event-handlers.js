@@ -1,4 +1,4 @@
-import Search from "../models/Search";
+import Search from "../models/Search.js";
 
 async function handlePostCreated(event) {
   try {
