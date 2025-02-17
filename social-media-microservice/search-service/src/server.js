@@ -8,7 +8,10 @@ import logger from "./utils/logger.js";
 import { connectRabbitMQ } from "../../media-service/src/utils/rabbitmq.js";
 import searchRoutes from "./routes/search-routes.js";
 import { consumeEvent } from "./utils/rabbitmq.js";
-import handlePostCreated from "./eventHandlers/search-event-handlers.js";
+import {
+  handlePostDeleted,
+  handlePostCreated,
+} from "./eventHandlers/search-event-handlers.js";
 
 dotenv.config();
 const app = express();
@@ -37,6 +40,10 @@ async function startServer() {
     await connectRabbitMQ();
 
     await consumeEvent("post.created", handlePostCreated);
+    await consumeEvent("post.deleted", handlePostDeleted);
+    app.listen(PORT, () => {
+      logger.info(`search service is runnning on port ${PORT}`);
+    });
   } catch (error) {
     logger.error(error, "Failed to start search service");
     process.exit(1);

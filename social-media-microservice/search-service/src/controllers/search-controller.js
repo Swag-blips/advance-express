@@ -1,4 +1,5 @@
 import Search from "../models/Search.js";
+import logger from "../utils/logger.js";
 
 export const searchPostController = async (req, res) => {
   logger.info("Search endpoint hit!");
