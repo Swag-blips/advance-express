@@ -7,6 +7,7 @@ import errorHandler from "./middleware/errorHandler.js";
 import logger from "./utils/logger.js";
 import { connectRabbitMQ } from "../../media-service/src/utils/rabbitmq.js";
 import searchRoutes from "./routes/search-routes.js";
+import { consumeEvent } from "./utils/rabbitmq.js";
 
 dotenv.config();
 const app = express();
@@ -30,6 +31,18 @@ app.use((req, res, next) => {
 app.use("/api/search", searchRoutes);
 app.use(errorHandler);
 
+async function startServer() {
+  try {
+    await connectRabbitMQ();
+
+    await consumeEvent("post.created");
+  } catch (error) {
+    logger.error(error, "Failed to start search service");
+    process.exit(1);
+  }
+}
+
+startServer();
 process.on("unhandledRejection", (reason, promise) => {
   logger.error("unhandled rejection at ", promise, "reason:", reason);
 });
