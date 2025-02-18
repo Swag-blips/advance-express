@@ -91,6 +91,46 @@ export const setup2FA = async (req, res) => {
   }
 };
 
-export const verify2FA = async (req, res) => {};
+export const verify2FA = async (req, res) => {
+  try {
+    const { token } = req.body;
 
-export const reset2FA = async (req, res) => {};
+    const user = req.user;
+
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: "base32",
+      token,
+    });
+
+    if (verified) {
+      const jwtToken = jwt.sign(
+        { username: user.username },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1hr",
+        }
+      );
+
+      res.status(200).json({ message: "2FA successful", token: jwtToken });
+    } else {
+      res.status(400).json({ message: "Invalid 2fa token" });
+    }
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+export const reset2FA = async (req, res) => {
+  try {
+    const user = req.user;
+    user.twoFactorSecret = "";
+    user.isMfaActive = false;
+    await user.save();
+    res.status(200).json({ message: "Reset successfull" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error resetting 2FA", message: "An error occured " });
+  }
+};
