@@ -1,5 +1,8 @@
 import bcrypt from "bcryptjs";
 import User from "../models/User.model.js";
+import jwt from "jsonwebtoken";
+import speakeasy from "speakeasy";
+import qrCode from "qrcode";
 
 export const register = async (req, res) => {
   try {
@@ -32,11 +35,61 @@ export const login = async (req, res) => {
   });
 };
 
-export const authStatus = async (req, res) => {};
+export const authStatus = async (req, res) => {
+  if (req.user) {
+    res.status(200).json({
+      message: "User logged in successfully",
+      username: req.user.username,
+      isMfaActive: req.user.isMfaActive,
+    });
+  } else {
+    res.status(401).json({ message: "Unauthorized user" });
+  }
+};
 
-export const logout = async (req, res) => {};
+export const logout = async (req, res) => {
+  if (!req.user) {
+    res.status(401).json({
+      message: "Unauthorized user",
+    });
+  }
 
-export const setup2FA = async (req, res) => {};
+  req.logout((err) => {
+    if (err) return res.status(400).json({ message: "User not logged In" });
+    res.status(200).json({ message: "Logout successful" });
+  });
+};
+
+export const setup2FA = async (req, res) => {
+  try {
+    const user = req.user;
+    const secret = speakeasy.generateSecret();
+
+    user.twoFactorSecret = secret.base32;
+    user.isMfaActive = true;
+
+    await user.save();
+
+    const url = speakeasy.otpauthURL({
+      secret: secret.base32,
+      label: `${req.user.username}`,
+      issuer: "swag.com",
+      encoding: "base32",
+    });
+
+    const qrImageUrl = await qrCode.toDataURL(url);
+    res.status(200).json({
+      secret: secret.base32,
+      qrCode: qrImageUrl,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      error: "Error setting up 2fa",
+      message: error.message,
+    });
+  }
+};
 
 export const verify2FA = async (req, res) => {};
 
