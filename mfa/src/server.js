@@ -4,6 +4,8 @@ import passport from "passport";
 import dotenv from "dotenv";
 import cors from "cors";
 import dbConnect from "./config/dbConnect.js";
+import authRoutes from "./routes/authRoutes.js";
+import "./config/passportConfig.js";
 dotenv.config();
 
 const app = express();
@@ -30,6 +32,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 // routes
+app.use("/api/auth", authRoutes);
 
 // listen to app
 
