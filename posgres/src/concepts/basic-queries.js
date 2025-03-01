@@ -18,9 +18,6 @@ async function createUsersTable() {
   }
 }
 
-
-async function insertNewRecord(){
-    
-}
+async function insertNewRecord() {}
 
 module.exports = { createUsersTable };
