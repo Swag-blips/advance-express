@@ -18,6 +18,23 @@ async function createUsersTable() {
   }
 }
 
-async function insertNewRecord() {}
+async function insertUser(username, email) {
+  const insertUserQuery = `
+    INSERT INTO users(username, email)
 
-module.exports = { createUsersTable };
+    VALUES ($1, $2)
+
+    RETURNING *
+    `;
+  try {
+    const res = await db.query(insertUserQuery, [username, email]);
+
+    console.log("User inseted successfully", res.rows[0]);
+
+    return res.rows[0];
+  } catch (error) {
+    console.error("Error while inserting users table", error);
+  }
+}
+
+module.exports = { createUsersTable, insertUser };

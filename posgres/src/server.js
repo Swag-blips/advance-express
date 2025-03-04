@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const { createUsersTable } = require("./concepts/basic-queries");
+const { createUsersTable, insertUser } = require("./concepts/basic-queries");
 
 async function testBasicQueries() {
   try {
@@ -11,7 +11,13 @@ async function testBasicQueries() {
 }
 
 async function testAllQueries() {
-  await testBasicQueries();
+  //   await testBasicQueries();
+
+  await insertUser("user_john", "john@example.com");
+  await insertUser("user_sarah", "sarah@example.com");
+  await insertUser("user_mike", "mike@example.com");
+  await insertUser("user_emma", "emma@example.com");
+  await insertUser("user_david", "david@example.com");
 }
 
 testAllQueries();
