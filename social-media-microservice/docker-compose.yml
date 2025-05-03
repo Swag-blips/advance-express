@@ -11,7 +11,7 @@ api-gateway:
     - rabbitmq
   environment:
     - REDIS_URL=redis://redis:6379
-    - RABBITMQ_URL=amqp://localhost:5672
+    - RABBITMQ_URL=amqp://rabbitmq:5672
 
 identity-service:
   build: ./identity-service
@@ -21,7 +21,7 @@ identity-service:
     - rabbitmq
   environment:
     - REDIS_URL=redis://redis:6379
-    - RABBITMQ_URL=amqp://localhost:5672
+    - RABBITMQ_URL=amqp://rabbitmq:5672
 
 post-service:
   build: ./post-service
