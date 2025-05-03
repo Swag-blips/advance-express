@@ -36,7 +36,7 @@ app.use("/api/search", searchRoutes);
 app.use(errorHandler);
 
 async function startServer() {
-  try {
+  try { 
     await connectRabbitMQ();
 
     await consumeEvent("post.created", handlePostCreated);
