@@ -16,7 +16,6 @@ api-gateway:
 identity-service:
   build: ./identity-service
   env_file: ./identity-service/.env
-
   depends_on:
     - redis
     - rabbitmq
@@ -55,11 +54,12 @@ search-service:
     - rabbitmq
   environment:
     - REDIS_URL=redis://redis:6379
-    - RABBITMQ_URL=amqp://localhost:5672
+    - RABBITMQ_URL= amqp://rabbitmq:5672
 
 redis:
   image: redis:alpine
-  ports: -"6379:6379"
+  ports: 
+   -"6379:6379"
 
 rabbitmq:
   image: rabbitmq:3-management
@@ -67,7 +67,7 @@ rabbitmq:
     - "5672:5672"
     - "15672:15672"
   healthcheck:
-    test: ["CMD", "rabbitmq-diagnostics", "-q" , "ping"]
+    test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
     interval: 30s
     timeout: 10s
-    retries:  5
+    retries: 5
