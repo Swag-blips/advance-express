@@ -45,3 +45,29 @@ media-service:
   environment:
     - REDIS_URL=redis://redis:6379
     - RABBITMQ_URL=amqp://localhost:5672
+
+search-service:
+  build: ./search-service
+  env_file: ./search-service/.env
+
+  depends_on:
+    - redis
+    - rabbitmq
+  environment:
+    - REDIS_URL=redis://redis:6379
+    - RABBITMQ_URL=amqp://localhost:5672
+
+redis:
+  image: redis:alpine
+  ports: -"6379:6379"
+
+rabbitmq:
+  image: rabbitmq:3-management
+  ports:
+    - "5672:5672"
+    - "15672:15672"
+  healthcheck:
+    test: ["CMD", "rabbitmq-diagnostics", "-q" , "ping"]
+    interval: 30s
+    timeout: 10s
+    retries:  5
